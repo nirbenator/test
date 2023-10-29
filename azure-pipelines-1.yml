@@ -13,6 +13,10 @@ parameters:
   displayName: 'Namespace'
   type: string
 
+- name: apikey
+  displayName: 'apikey'
+  type: string
+
 jobs:
 - job: APICallJob
   displayName: 'API Call Job'
@@ -24,7 +28,7 @@ jobs:
       curl -X 'POST' \
       'https://api.komodor.com/mgmt/v1/rbac/policies' \
       -H 'accept: application/json' \
-      -H 'x-api-key: $(API_KEY)' \
+      -H 'x-api-key: "${{ parameters.apikey }}" \
       -H 'Content-Type: application/json' \
       -d '{
       "name": "${{ parameters.namespace }}",
