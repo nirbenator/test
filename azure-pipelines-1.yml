@@ -1,0 +1,48 @@
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+parameters:
+- name: clustername
+  displayName: 'Cluster Name'
+  type: string
+
+- name: namespace
+  displayName: 'Namespace'
+  type: string
+
+jobs:
+- job: APICallJob
+  displayName: 'API Call Job'
+  
+  steps:
+  - checkout: none  # Since you're not working with a repo
+  
+  - script: |
+      curl -X 'POST' \
+      'https://api.komodor.com/mgmt/v1/rbac/policies' \
+      -H 'accept: application/json' \
+      -H 'x-api-key: $(API_KEY)' \
+      -H 'Content-Type: application/json' \
+      -d '{
+      "name": "${{ parameters.namespace }}",
+      "statements": [
+        {
+          "actions": [
+            "*"
+          ],
+          "resources": [
+            {
+              "cluster": "${{ parameters.clustername }}",
+              "namespaces": [
+                "${{ parameters.namespace }}"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      displayName: 'Make API Call'
+      API_KEY: $(API_KEY)
